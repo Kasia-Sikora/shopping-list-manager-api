@@ -62,7 +62,7 @@ export async function PATCH(
     const id = (await params).id;
     const data = await _request.json();
     const list = await listService.patchList(id, data);
-    return NextResponse.json(list, { headers: corsHeaders });
+    return NextResponse.json(list, { status: 200, headers: corsHeaders });
   } catch (error) {
     if (error instanceof NotFoundError) {
       return NextResponse.json(

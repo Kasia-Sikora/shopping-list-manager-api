@@ -8,7 +8,7 @@ export { OPTIONS } from "@/consts";
 export async function GET() {
   try {
     const lists = await listService.getAllLists();
-    return NextResponse.json(lists, { headers: corsHeaders });
+    return NextResponse.json(lists, { status: 200, headers: corsHeaders });
   } catch (error) {
     console.error("Failed to get lists in GET method. ", { error });
     return NextResponse.json(
