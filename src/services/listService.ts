@@ -23,7 +23,7 @@ export const createList = async (data: List) => {
     updatedAt: data?.updatedAt ?? now,
   };
 
-  if (!list.id || !list.title || !list.content) {
+  if (!list.id || typeof list.title !== 'string' || !list.content) {
     throw new ValidationError(
       `Data provided is not valid: ${JSON.stringify(list)}`,
     );
@@ -50,7 +50,7 @@ export const patchList = async (id: string, data: List) => {
     ...data,
   } as List;
 
-  if (!newList.title || !newList.content || !newList.createdAt) {
+  if (typeof newList.title !== 'string'  || !newList.content || !newList.createdAt) {
     throw new ValidationError(
       `Data provided is not valid: ${JSON.stringify(newList)}`,
     );
