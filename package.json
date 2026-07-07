@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
     "lint": "eslint",
     "lint:fix": "eslint --fix"
   },
@@ -17,7 +19,10 @@
     "@types/node": "^20",
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
+    "@vitest/coverage-v8": "^4.1.10",
     "eslint-config-prettier": "^10.1.8",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.10"
   }
 }
