@@ -65,7 +65,7 @@ describe("listSevice", () => {
     vi.mocked(listQueries.getList).mockResolvedValue(DEFAULT_VALUES[0]);
     vi.mocked(listQueries.updateList);
     await expect(
-      listService.patchList("test-id", { id: "test-id", title: '' } as List),
+      listService.patchList("test-id", { id: "test-id", title: undefined as any as string } as List),
     ).rejects.toThrow("Data provided is not valid");
   });
 });
