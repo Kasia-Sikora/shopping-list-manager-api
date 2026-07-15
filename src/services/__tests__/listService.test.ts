@@ -3,14 +3,13 @@ import * as listQueries from "../../db/queries/listQueries";
 import * as listService from "../listService";
 import { DEFAULT_VALUES, exampleList } from "./fixtures";
 import { List } from "@/interfaces";
-import { ValidationError } from "@/errors";
 
 vi.mock("@/db/queries/listQueries");
 
 describe("listSevice", () => {
   beforeEach(() => vi.resetAllMocks());
 
-  it("getLists returns the list", async () => {
+  it("getList returns the list", async () => {
     vi.mocked(listQueries.getList).mockResolvedValue(DEFAULT_VALUES[0]);
     const result = await listService.getList("0");
     expect(result).toEqual(DEFAULT_VALUES[0]);
@@ -65,7 +64,7 @@ describe("listSevice", () => {
     vi.mocked(listQueries.getList).mockResolvedValue(DEFAULT_VALUES[0]);
     vi.mocked(listQueries.updateList);
     await expect(
-      listService.patchList("test-id", { id: "test-id", title: undefined as any as string } as List),
+      listService.patchList("test-id", { id: "test-id", title: undefined as unknown as string } as List),
     ).rejects.toThrow("Data provided is not valid");
   });
 });
