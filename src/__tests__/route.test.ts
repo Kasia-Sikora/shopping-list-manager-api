@@ -1,21 +1,15 @@
-import { GET, POST } from "@/app/api/lists/route";
+import { GET, OPTIONS, POST } from "@/app/api/lists/route";
 import { ValidationError } from "@/errors";
 import { DEFAULT_VALUES, exampleList } from "@/services/__tests__/fixtures";
 import * as listService from "@/services/listService";
 import { NextRequest } from "next/server";
-import {
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi
-} from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/services/listService");
 
 beforeEach(() => vi.resetAllMocks());
 
-describe("route", () => {
+describe("/lists", () => {
   it("returns 200 and the lists from the service /GET method", async () => {
     vi.mocked(listService.getAllLists).mockResolvedValueOnce(DEFAULT_VALUES);
 
@@ -103,5 +97,11 @@ describe("route", () => {
       "Failed to create list in POST method. ",
       { error: expect.any(Error) },
     );
+  });
+
+  it("should call OPTIONS", async () => {
+    const response = await OPTIONS();
+
+    expect(response.status).toBe(200);
   });
 });
