@@ -67,4 +67,17 @@ describe("listSevice", () => {
       listService.patchList("test-id", { id: "test-id", title: undefined as unknown as string } as List),
     ).rejects.toThrow("Data provided is not valid");
   });
+
+  it("patchList passes a tombstone (deleted: true) through to updateList", async () => {
+    vi.mocked(listQueries.getList).mockResolvedValue(DEFAULT_VALUES[0]);
+    vi.mocked(listQueries.updateList);
+    const tombstone = { ...exampleList, deleted: true };
+
+    await listService.patchList(exampleList.id, tombstone);
+
+    expect(listQueries.updateList).toHaveBeenCalledWith(
+      exampleList.id,
+      expect.objectContaining({ deleted: true }),
+    );
+  });
 });

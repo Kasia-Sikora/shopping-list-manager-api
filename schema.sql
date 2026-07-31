@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS lists (
   content JSONB NOT NULL,
   owner_id UUID REFERENCES users(id),
   created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE INDEX idx_lists_updated_at ON lists (updated_at DESC);
