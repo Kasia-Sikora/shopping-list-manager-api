@@ -41,10 +41,27 @@ describe("listQueries — deleted column", () => {
 
     const result = await listQueries.getAllLists();
 
-    const sql = query.mock.calls[0]![0] as string;
-    expect(sql).toContain("deleted");
-    expect(sql).not.toMatch(/where\s+deleted/i); // sync must see tombstones — no filtering here
+    // getAllLists runs two statements — the tombstone purge (a DELETE that legitimately contains
+    // "WHERE deleted") and the read. Assert on the SELECT specifically.
+    const selectSql = query.mock.calls
+      .map((c) => c[0] as string)
+      .find((sql) => /^\s*select/i.test(sql))!;
+    expect(selectSql).toContain("deleted");
+    expect(selectSql).not.toMatch(/where\s+deleted/i);
     expect(result).toEqual(rows);
+  });
+
+  it("getAllLists purges old tombstones (deleted rows past the retention window) before reading", async () => {
+    query.mockResolvedValue({ rows: [] });
+
+    await listQueries.getAllLists();
+
+    const deleteCall = query.mock.calls.find((c) => /^\s*delete/i.test(c[0] as string))!;
+    const [deleteSql, params] = deleteCall;
+    expect(deleteSql as string).toMatch(/delete\s+from\s+lists/i);
+    expect(deleteSql as string).toMatch(/deleted\s*=\s*true/i);
+    expect(deleteSql as string).toMatch(/updated_at/i);
+    expect(params).toEqual([30]); // retention window, in days
   });
 
   it("getList selects the deleted column", async () => {

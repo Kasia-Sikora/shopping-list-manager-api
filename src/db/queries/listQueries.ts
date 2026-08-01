@@ -2,6 +2,10 @@ import { List } from "@/interfaces";
 import { db } from "../connection";
 
 export const getAllLists = async () => {
+  await db.query(
+    "DELETE FROM lists WHERE deleted = true AND updated_at < now() - ($1 * interval '1 day')",
+    [30],
+  );
   const result = await db.query(
     'SELECT id, title, content, owner_id as "ownerId", created_at as "createdAt", updated_at as "updatedAt", deleted FROM lists',
   );
