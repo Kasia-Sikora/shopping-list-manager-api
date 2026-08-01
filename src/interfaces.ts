@@ -5,4 +5,5 @@ export type List = {
   ownerId: string | null;
   createdAt: string;
   updatedAt?: string;
+  deleted?: boolean;
 };

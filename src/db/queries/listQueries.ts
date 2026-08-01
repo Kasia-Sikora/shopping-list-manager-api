@@ -2,13 +2,22 @@ import { List } from "@/interfaces";
 import { db } from "../connection";
 
 export const getAllLists = async () => {
-  const result = await db.query('SELECT id, title, content, owner_id as "ownerId", created_at as "createdAt", updated_at as "updatedAt" FROM lists');
-  return result.rows
+  await db.query(
+    "DELETE FROM lists WHERE deleted = true AND updated_at < now() - ($1 * interval '1 day')",
+    [30],
+  );
+  const result = await db.query(
+    'SELECT id, title, content, owner_id as "ownerId", created_at as "createdAt", updated_at as "updatedAt", deleted FROM lists',
+  );
+  return result.rows;
 };
 
 export const getList = async (id: string) => {
-  const result = await db.query('SELECT id, title, content, owner_id as "ownerId", created_at as "createdAt", updated_at as "updatedAt" FROM lists WHERE id = $1', [id]);
-  return result.rows[0] ?? null
+  const result = await db.query(
+    'SELECT id, title, content, owner_id as "ownerId", created_at as "createdAt", updated_at as "updatedAt", deleted FROM lists WHERE id = $1',
+    [id],
+  );
+  return result.rows[0] ?? null;
 };
 
 export const insertList = async (list: List) => {
@@ -27,18 +36,19 @@ export const insertList = async (list: List) => {
 
 export const deleteList = async (id: string) => {
   const result = await db.query("DELETE FROM lists WHERE id = $1", [id]);
-  return !(result.rowCount === null || result.rowCount === 0)
+  return !(result.rowCount === null || result.rowCount === 0);
 };
 
 export const updateList = async (id: string, list: List) => {
- return db.query(
-    "UPDATE lists SET title = $1, content = $2, owner_id = $3, updated_at = $4 WHERE id = $5",
+  return db.query(
+    "UPDATE lists SET title = $1, content = $2, owner_id = $3, updated_at = $4, deleted = $5 WHERE id = $6",
     [
       list.title,
       JSON.stringify(list.content),
       list.ownerId,
       list.updatedAt,
-      id
+      list.deleted ?? false,
+      id,
     ],
   );
-}
+};
