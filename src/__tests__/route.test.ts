@@ -1,4 +1,8 @@
 import { GET, OPTIONS, POST } from "@/app/api/lists/route";
+import {
+  GET as GETHealth,
+  OPTIONS as OPTIONSHealth,
+} from "@/app/api/health/route";
 import { ValidationError } from "@/errors";
 import { DEFAULT_VALUES, exampleList } from "@/services/__tests__/fixtures";
 import * as listService from "@/services/listService";
@@ -8,6 +12,21 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("@/services/listService");
 
 beforeEach(() => vi.resetAllMocks());
+
+describe("/health", () => {
+  it("GET /health returns 200 with CORS headers", async () => {
+    const res = await GETHealth();
+
+    expect(res.status).toBe(200);
+    expect(res.headers.has("Access-Control-Allow-Origin")).toBe(true);
+  });
+
+  it("should call OPTIONS", async () => {
+    const res = await OPTIONSHealth();
+
+    expect(res.status).toBe(200);
+  });
+});
 
 describe("/lists", () => {
   it("returns 200 and the lists from the service /GET method", async () => {
